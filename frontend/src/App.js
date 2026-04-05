@@ -22,6 +22,7 @@ function App() {
         <Route path="/setup-household" element={<ProtectedRoute><DashboardLayout><HouseholdSetup /></DashboardLayout></ProtectedRoute>} />
         <Route path="/members" element={<ProtectedRoute><DashboardLayout><Members /></DashboardLayout></ProtectedRoute>} />
         <Route path="/members/invite" element={<ProtectedRoute><DashboardLayout><InviteMemberPage /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/members" element={<ProtectedRoute><DashboardLayout><Members /></DashboardLayout></ProtectedRoute>} />
       </Routes>
     </Router>
   );
