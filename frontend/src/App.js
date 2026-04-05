@@ -6,6 +6,7 @@ import LandingPage from './pages/LandingPage';
 import ProtectedRoute from './lib/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
 import Dashboard from './pages/Dashboard';
+import HouseholdSetup from './pages/HouseholdSetup';
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout><Dashboard /></DashboardLayout></ProtectedRoute>} />
-
+        <Route path="/setup-household" element={<ProtectedRoute><DashboardLayout><HouseholdSetup /></DashboardLayout></ProtectedRoute>} />
       </Routes>
     </Router>
   );
