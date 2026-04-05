@@ -1,24 +1,83 @@
+# Full-Stack CRUD Application with DevOps Practices
 
-**Assessment 1.2 (Total Marks **20**)**
+This project is developed as part of the **IFN636: Software Life Cycle Management** assessment. It is a full-stack CRUD web application built using modern web technologies and deployed using DevOps practices.
 
-Assignment: **Software requirements analysis and design (**Full-Stack CRUD Application Development with DevOps Practices**)**
-
-
----
-
-**Objective**
-
-For this assessment, you have already been assigned a project. Your task is to develop a system that implements CRUD (Create, Read, Update, Delete) operations based on the selected project. The system should include both a user panel and an admin panel. Depending on the nature of your chosen project, you may decide how many CRUD operations are required to support the functionality of the system. You have been provided with a starter project that includes user authentication using Node.js, React.js, and MongoDB, your should extend this application based on your assigned project requirements. Ensure that the implemented features are appropriate and meaningful for your selected project. Your project should include the following:
-In this assignment you will complete the following tasks:
-
-* **Basic Version Control using GitHub**
-* **Development, CI/CD Integration for Automated Deployment**
-* **Project report**
-
- 
----
-
-**GitHub link of the starter project: **[https://github.com/nahaQUT/sampleapp_IFQ636.git](https://github.com/nahaQUT/sampleapp_IFQ636.git)
+The application includes a backend API, frontend user interface, authentication and authorisation, GitHub version control workflow, and CI/CD pipeline integration.
 
 ---
 
+## Project Overview
+
+This system allows users to interact with a full-stack web application that supports core CRUD (Create, Read, Update, Delete) operations. It also includes secure authentication and deployment practices.
+
+The purpose of this project is to demonstrate understanding of:
+
+- Backend development
+- Frontend development
+- Authentication and authorisation
+- Git branching strategy
+- CI/CD workflow setup
+- Cloud deployment using AWS EC2
+
+---
+
+## Tech Stack
+
+### Frontend
+- React.js
+- HTML
+- CSS
+- JavaScript
+
+### Backend
+- Node.js
+- Express.js
+
+### Database
+- MongoDB
+
+### DevOps / Deployment
+- GitHub
+- GitHub Actions
+- AWS EC2
+- PM2
+
+---
+
+## Features
+
+- User registration and login
+- Secure authentication and authorisation
+- CRUD operations
+- Frontend and backend integration
+- REST API handling
+- GitHub branching workflow
+- CI/CD pipeline using GitHub Actions
+- Deployment on AWS EC2
+
+---
+
+## Project Structure
+
+```bash
+project-root/
+│
+├── backend/
+│   ├── controllers/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── tests/
+│   ├── server.js
+│   └── package.json
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+└── README.md
