@@ -12,6 +12,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+// api
 app.use('/api', mainRouter);
 
 // Export the app object for testing

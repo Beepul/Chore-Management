@@ -82,7 +82,7 @@ const ChoreDetails = () => {
 
   useEffect(() => {
     fetchChoreDetails();
-  }, [id]);
+  }, [id, fetchChoreDetails]);
 
   if (loading) {
     return <div>Loading chore details...</div>;

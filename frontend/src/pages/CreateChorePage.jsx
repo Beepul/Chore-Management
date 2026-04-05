@@ -47,7 +47,7 @@ const CreateChorePage = () => {
 
   useEffect(() => {
     fetchPageData();
-  }, []);
+  }, [fetchPageData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
