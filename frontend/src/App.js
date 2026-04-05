@@ -7,6 +7,8 @@ import ProtectedRoute from './lib/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
 import Dashboard from './pages/Dashboard';
 import HouseholdSetup from './pages/HouseholdSetup';
+import Members from './pages/Members';
+import InviteMemberPage from './pages/InviteMemberPage';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout><Dashboard /></DashboardLayout></ProtectedRoute>} />
         <Route path="/setup-household" element={<ProtectedRoute><DashboardLayout><HouseholdSetup /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/members" element={<ProtectedRoute><DashboardLayout><Members /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/members/invite" element={<ProtectedRoute><DashboardLayout><InviteMemberPage /></DashboardLayout></ProtectedRoute>} />
       </Routes>
     </Router>
   );
