@@ -11,6 +11,8 @@ import Members from './pages/Members';
 import InviteMemberPage from './pages/InviteMemberPage';
 import Chores from './pages/Chores';
 import CreateChorePage from './pages/CreateChorePage';
+import ChoreDetails from './pages/ChoreDetails';
+import EditChorePage from './pages/EditChorePage';
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
         <Route path="/members" element={<ProtectedRoute><DashboardLayout><Members /></DashboardLayout></ProtectedRoute>} />
         <Route path="/chores" element={<ProtectedRoute><DashboardLayout><Chores /></DashboardLayout></ProtectedRoute>} />
         <Route path="/chores/create" element={<ProtectedRoute><DashboardLayout><CreateChorePage /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/chores/:id" element={<ProtectedRoute><DashboardLayout><ChoreDetails /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/chores/edit/:id" element={<ProtectedRoute><DashboardLayout><EditChorePage /></DashboardLayout></ProtectedRoute>} />
       </Routes>
     </Router>
   );

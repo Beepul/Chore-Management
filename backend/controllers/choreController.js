@@ -110,5 +110,194 @@ const getMainChores = async (req, res) => {
   }
 };
 
+const getAllChores = async (req, res) => {
+  try {
+    const currentMembership = await MemberModel.findOne({
+      user: req.user._id,
+      status: "active",
+    });
 
-module.exports = { createChore, getMainChores };
+    if (!currentMembership) {
+      return res.status(400).json({
+        message: "You do not belong to any household",
+      });
+    }
+
+    const chores = await ChoreModel.find({
+      household: currentMembership.household,
+    })
+      .populate("assignedTo", "fullname email")
+      .populate("createdBy", "fullname email")
+      .populate("parentChore", "title")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      data: chores,
+      message: "Chores fetched successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const getSingleChore = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const currentMembership = await MemberModel.findOne({
+      user: req.user._id,
+      status: "active",
+    });
+
+    if (!currentMembership) {
+      return res.status(400).json({
+        message: "You do not belong to any household",
+      });
+    }
+
+    const chore = await ChoreModel.findOne({
+      _id: id,
+      household: currentMembership.household,
+    })
+      .populate("assignedTo", "fullname email")
+      .populate("createdBy", "fullname email");
+
+    if (!chore) {
+      return res.status(404).json({
+        message: "Chore not found",
+      });
+    }
+
+    const subChores = await ChoreModel.find({
+      parentChore: chore._id,
+      household: currentMembership.household,
+    })
+      .populate("assignedTo", "fullname email")
+      .populate("createdBy", "fullname email")
+      .sort({ createdAt: 1 });
+
+    return res.status(200).json({
+      data: {
+        chore,
+        subChores,
+      },
+      message: "Chore details fetched successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const deleteChore = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const currentMembership = await MemberModel.findOne({
+      user: req.user._id,
+      status: "active",
+    });
+
+    if (!currentMembership) {
+      return res.status(400).json({
+        message: "You do not belong to any household",
+      });
+    }
+
+    if (currentMembership.role !== "admin") {
+      return res.status(403).json({
+        message: "Only admin can delete chores",
+      });
+    }
+
+    const chore = await ChoreModel.findById(id);
+
+    if (!chore) {
+      return res.status(404).json({
+        message: "Chore not found",
+      });
+    }
+
+    if (chore.household.toString() !== currentMembership.household.toString()) {
+      return res.status(403).json({
+        message: "You can only delete chores from your own household",
+      });
+    }
+
+    await ChoreModel.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      message: "Chore deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+const updateChore = async (req, res) => {
+  const { id } = req.params;
+  const { title, description, category, dueDate, assignedTo } = req.body;
+
+  try {
+    if (!title) {
+      return res.status(400).json({
+        message: "Title is required",
+      });
+    }
+
+    const currentMembership = await MemberModel.findOne({
+      user: req.user._id,
+      status: "active",
+    });
+
+    if (!currentMembership) {
+      return res.status(400).json({
+        message: "You do not belong to any household",
+      });
+    }
+
+    if (currentMembership.role !== "admin") {
+      return res.status(403).json({
+        message: "Only admin can update chores",
+      });
+    }
+
+    const chore = await ChoreModel.findById(id);
+
+    if (!chore) {
+      return res.status(404).json({
+        message: "Chore not found",
+      });
+    }
+
+    if (chore.household.toString() !== currentMembership.household.toString()) {
+      return res.status(403).json({
+        message: "You can only update chores from your own household",
+      });
+    }
+
+    chore.title = title;
+    chore.description = description || "";
+    chore.category = category || "";
+    chore.dueDate = dueDate || null;
+    chore.assignedTo = assignedTo || [];
+
+    await chore.save();
+
+    return res.status(200).json({
+      data: chore,
+      message: "Chore updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { createChore, getMainChores, getAllChores, getSingleChore, deleteChore, updateChore};
