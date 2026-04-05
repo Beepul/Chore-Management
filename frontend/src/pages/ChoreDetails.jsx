@@ -44,6 +44,42 @@ const ChoreDetails = () => {
     }
   };
 
+  const handleStatusChange = async (newStatus) => {
+    try {
+      const response = await axiosInstance.patch(`/api/chore/${id}/status`, {
+        status: newStatus,
+      });
+
+      alert(response.data.message || "Status updated successfully");
+
+      setChore((prev) => ({
+        ...prev,
+        status: newStatus,
+      }));
+    } catch (error) {
+      alert(error?.response?.data?.message || "Failed to update status");
+    }
+  };
+
+  const handleSubStatusChange = async (subId, newStatus) => {
+    try {
+      const response = await axiosInstance.patch(
+        `/api/chore/${subId}/status`,
+        { status: newStatus }
+      );
+
+      alert(response.data.message || "Status updated");
+
+      setSubChores((prev) =>
+        prev.map((sub) =>
+          sub._id === subId ? { ...sub, status: newStatus } : sub
+        )
+      );
+    } catch (error) {
+      alert(error?.response?.data?.message || "Failed to update status");
+    }
+  };
+
   useEffect(() => {
     fetchChoreDetails();
   }, [id]);
@@ -55,6 +91,10 @@ const ChoreDetails = () => {
   if (!chore) {
     return <div>Chore not found</div>;
   }
+
+  const isAssignedToCurrentUser = chore?.assignedTo?.some(
+    (member) => member._id === user?.user._id
+  );
 
   return (
     <div className="max-w-4xl mx-auto bg-white border rounded-lg shadow p-6">
@@ -99,6 +139,28 @@ const ChoreDetails = () => {
         <div>
           <span className="font-semibold">Status: </span>
           {chore.status}
+
+          {isAssignedToCurrentUser && (
+            <div className="mt-3 flex gap-3">
+              {chore.status === "pending" && (
+                <button
+                  onClick={() => handleStatusChange("in_progress")}
+                  className="px-3 py-2 text-sm bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200"
+                >
+                  Start Task
+                </button>
+              )}
+
+              {chore.status !== "completed" && (
+                <button
+                  onClick={() => handleStatusChange("completed")}
+                  className="px-3 py-2 text-sm bg-green-100 text-green-700 rounded hover:bg-green-200"
+                >
+                  Mark Completed
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         <div>
@@ -122,6 +184,10 @@ const ChoreDetails = () => {
         {subChores.length > 0 ? (
           <div className="space-y-4">
             {subChores.map((sub) => {
+              const isAssigned = sub.assignedTo?.some(
+                (member) => member._id === user?._id
+              );
+
               return (
                 <div key={sub._id} className="border rounded-md p-4 bg-gray-50">
                   <p className="font-medium">{sub.title}</p>
@@ -136,6 +202,32 @@ const ChoreDetails = () => {
 
                   <div className="text-sm text-gray-600">
                     <span>Status: {sub.status}</span>
+
+                    {isAssigned && (
+                      <div className="mt-2 flex gap-2">
+                        {sub.status === "pending" && (
+                          <button
+                            onClick={() =>
+                              handleSubStatusChange(sub._id, "in_progress")
+                            }
+                            className="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded"
+                          >
+                            Start
+                          </button>
+                        )}
+
+                        {sub.status !== "completed" && (
+                          <button
+                            onClick={() =>
+                              handleSubStatusChange(sub._id, "completed")
+                            }
+                            className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded"
+                          >
+                            Complete
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   <p className="text-sm text-gray-600">

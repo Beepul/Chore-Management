@@ -300,4 +300,72 @@ const updateChore = async (req, res) => {
   }
 };
 
-module.exports = { createChore, getMainChores, getAllChores, getSingleChore, deleteChore, updateChore};
+const updateChoreStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    if (!status) {
+      return res.status(400).json({
+        message: "Status is required",
+      });
+    }
+
+    const allowedStatuses = ["pending", "in_progress", "completed"];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid status value",
+      });
+    }
+
+    const currentMembership = await MemberModel.findOne({
+      user: req.user._id,
+      status: "active",
+    });
+
+    if (!currentMembership) {
+      return res.status(400).json({
+        message: "You do not belong to any household",
+      });
+    }
+
+    const chore = await ChoreModel.findById(id);
+
+    if (!chore) {
+      return res.status(404).json({
+        message: "Chore not found",
+      });
+    }
+
+    if (chore.household.toString() !== currentMembership.household.toString()) {
+      return res.status(403).json({
+        message: "You can only update chores from your own household",
+      });
+    }
+
+    const isAssigned = chore.assignedTo.some(
+      (memberId) => memberId.toString() === req.user._id.toString()
+    );
+
+    if (!isAssigned) {
+      return res.status(403).json({
+        message: "You can only update chores assigned to you",
+      });
+    }
+
+    chore.status = status;
+    await chore.save();
+
+    return res.status(200).json({
+      data: chore,
+      message: "Chore status updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { createChore, getMainChores, getAllChores, getSingleChore, deleteChore, updateChore, updateChoreStatus};
