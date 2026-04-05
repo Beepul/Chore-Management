@@ -1,6 +1,7 @@
 const HouseHoldModel = require("../models/HouseHold.model");
 const MemberModel = require("../models/Member.model");
 const UserModel = require("../models/User.model");
+const bcrypt = require('bcrypt');
 
 const updateProfile = async (req, res) => {
   const { fullname } = req.body;
@@ -88,4 +89,55 @@ const updateHouseholdName = async (req, res) => {
   }
 };
 
-module.exports = { updateProfile, updateHouseholdName };
+const changePassword = async (req, res) => {
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  try {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        message: "Please provide all password fields",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        message: "New password and confirm password do not match",
+      });
+    }
+
+    const user = await UserModel.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    const isValidPassword = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+
+    if (!isValidPassword) {
+      return res.status(400).json({
+        message: "Current password is incorrect",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+module.exports = { updateProfile, updateHouseholdName, changePassword };
