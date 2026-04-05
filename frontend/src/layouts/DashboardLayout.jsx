@@ -86,7 +86,7 @@ const DashboardLayout = ({children}) => {
                 </li>
                 <li>
                     <NavLink
-                    to="/profile-settings"
+                    to="/settings"
                     end
                     className={({ isActive }) =>
                         isActive
@@ -94,7 +94,7 @@ const DashboardLayout = ({children}) => {
                         : 'p-3 inline-block rounded-md pr-20 hover:text-green-700 w-full'
                     }
                     >
-                    Profile Settings
+                    Settings
                     </NavLink>
                 </li>
             </ul>

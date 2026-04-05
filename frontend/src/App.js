@@ -13,6 +13,7 @@ import Chores from './pages/Chores';
 import CreateChorePage from './pages/CreateChorePage';
 import ChoreDetails from './pages/ChoreDetails';
 import EditChorePage from './pages/EditChorePage';
+import SettingsPage from './pages/SettingsPage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/chores/create" element={<ProtectedRoute><DashboardLayout><CreateChorePage /></DashboardLayout></ProtectedRoute>} />
         <Route path="/chores/:id" element={<ProtectedRoute><DashboardLayout><ChoreDetails /></DashboardLayout></ProtectedRoute>} />
         <Route path="/chores/edit/:id" element={<ProtectedRoute><DashboardLayout><EditChorePage /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/settings" element={<ProtectedRoute><DashboardLayout><SettingsPage /></DashboardLayout></ProtectedRoute>} />
       </Routes>
     </Router>
   );
