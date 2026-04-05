@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard';
 import HouseholdSetup from './pages/HouseholdSetup';
 import Members from './pages/Members';
 import InviteMemberPage from './pages/InviteMemberPage';
+import Chores from './pages/Chores';
+import CreateChorePage from './pages/CreateChorePage';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
         <Route path="/members" element={<ProtectedRoute><DashboardLayout><Members /></DashboardLayout></ProtectedRoute>} />
         <Route path="/members/invite" element={<ProtectedRoute><DashboardLayout><InviteMemberPage /></DashboardLayout></ProtectedRoute>} />
         <Route path="/members" element={<ProtectedRoute><DashboardLayout><Members /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/chores" element={<ProtectedRoute><DashboardLayout><Chores /></DashboardLayout></ProtectedRoute>} />
+        <Route path="/chores/create" element={<ProtectedRoute><DashboardLayout><CreateChorePage /></DashboardLayout></ProtectedRoute>} />
       </Routes>
     </Router>
   );
