@@ -2,6 +2,7 @@
 const User = require('../models/User.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const MemberModel = require('../models/Member.model');
 
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
@@ -73,6 +74,33 @@ const loginUser = async (req, res) => {
     }
 };
 
+const getProfile = async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id);
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      const membership = await MemberModel.findOne({
+        user: req.user.id,
+        status: "active"
+      }).populate("household");
+  
+        return res.status(200).json({
+            data: {
+                user: req.user,
+                household: membership ? membership.household : null,
+                role: membership ? membership.role : null,
+                hasHousehold: !!membership,
+                isNewUser: !membership,
+            },
+            message: "User profile fetched successfully",
+        });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
 
 
-module.exports = { registerUser, loginUser};
+
+module.exports = { registerUser, loginUser, getProfile};
