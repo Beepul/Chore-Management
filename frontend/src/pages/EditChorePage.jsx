@@ -55,7 +55,7 @@ const EditChorePage = () => {
 
   useEffect(() => {
     fetchPageData();
-  }, [id]);
+  }, [id, fetchPageData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
