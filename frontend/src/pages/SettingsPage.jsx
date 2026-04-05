@@ -9,6 +9,13 @@ const SettingsPage = () => {
     fullname: "",
   });
 
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+
   const [householdData, setHouseholdData] = useState({
     name: user?.household?.name || "",
   });
@@ -45,6 +52,23 @@ const SettingsPage = () => {
     }
   };
 
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axiosInstance.put("/api/settings/password", passwordData);
+      alert(response.data.message || "Password updated");
+
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error) {
+      alert(error?.response?.data?.message || "Failed to change password");
+    }
+  };
+
   useEffect(() => {
     if (user?.user?.fullname) {
       setProfileData({
@@ -74,6 +98,57 @@ const SettingsPage = () => {
             className="bg-[#227F74] text-white px-5 py-3 rounded-md"
           >
             Update Profile
+          </button>
+        </form>
+      </div>
+
+      <div className="bg-white border rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-4">Change Password</h2>
+        <form onSubmit={handlePasswordSubmit} className="space-y-4">
+          <input
+            type="password"
+            value={passwordData.currentPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                currentPassword: e.target.value,
+              })
+            }
+            className="w-full border rounded-md p-3"
+            placeholder="Current password"
+          />
+
+          <input
+            type="password"
+            value={passwordData.newPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                newPassword: e.target.value,
+              })
+            }
+            className="w-full border rounded-md p-3"
+            placeholder="New password"
+          />
+
+          <input
+            type="password"
+            value={passwordData.confirmPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                confirmPassword: e.target.value,
+              })
+            }
+            className="w-full border rounded-md p-3"
+            placeholder="Confirm new password"
+          />
+
+          <button
+            type="submit"
+            className="bg-[#227F74] text-white px-5 py-3 rounded-md"
+          >
+            Change Password
           </button>
         </form>
       </div>
