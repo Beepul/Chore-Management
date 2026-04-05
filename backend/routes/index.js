@@ -4,6 +4,8 @@ const householdRoutes = require('./household.routes')
 const invitationRoutes = require('./invitation.routes')
 const memberRoutes = require('./member.routes')
 const choreRoutes = require('./chore.routes');
+const { getAdminDashboard } = require('../controllers/adminController');
+const { protect } = require('../middleware/authMiddleware');
 
 const mainRouter = express.Router();
 
@@ -13,5 +15,6 @@ mainRouter.use('/household', householdRoutes);
 mainRouter.use('/invitation', invitationRoutes);
 mainRouter.use('/members', memberRoutes);
 mainRouter.use('/chore', choreRoutes);
+mainRouter.get('/dashboard/admin', protect, getAdminDashboard);
 
 module.exports = mainRouter;
