@@ -1,4 +1,4 @@
-name: Chore Master CI/CD
+name: Backend CI
 
 on:
   push:
@@ -13,6 +13,8 @@ jobs:
     strategy:
       matrix:
         node-version: [22]
+
+    environment: MONGO_URI
 
     steps:
       - name: Checkout Code
@@ -29,9 +31,9 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           PORT: ${{ secrets.PORT }}
         run: |
-          echo "MONGO_URI is set: ${MONGO_URI:+YES}"
-          echo "JWT_SECRET is set: ${JWT_SECRET:+YES}"
-          echo "PORT is set: ${PORT:+YES}"
+          echo "Secret 1 is: $MONGO_URI"
+          echo "Secret 2 is: $JWT_SECRET"
+          echo "Secret 3 is: $PORT"
 
       - name: Stop PM2 apps if running
         run: pm2 stop all || true
@@ -68,17 +70,23 @@ jobs:
           touch .env
           echo "${{ secrets.PROD }}" > .env
 
-      - name: Delete old PM2 app if exists
+      - name: Install serve globally
+        run: npm install -g serve
+
+      - name: Delete old PM2 app names if they exist
         run: |
           pm2 delete chore-master-backend || true
+          pm2 delete backend || true
+          pm2 delete frontend || true
 
-      - name: Start or Restart Backend
-        run: |
-          pm2 restart backend || pm2 start backend/server.js --name backend
+      - name: Start Backend
+        run: pm2 start backend/server.js --name backend
 
-      - name: Start or Restart Frontend
-        run: |
-          pm2 restart frontend || pm2 start serve --name frontend -- -s frontend/build -l 3000
+      - name: Start Frontend
+        run: pm2 start serve --name frontend -- -s frontend/build -l 3000
 
       - name: Save PM2 process list
         run: pm2 save
+
+      - name: Restart PM2 apps
+        run: pm2 restart all
