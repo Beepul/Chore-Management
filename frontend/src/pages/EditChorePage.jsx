@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../axiosConfig";
 
@@ -18,16 +18,16 @@ const EditChorePage = () => {
   const [loading, setLoading] = useState(true);
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  const fetchMembers = async () => {
+  const fetchMembers = useCallback(async () => {
     try {
       const response = await axiosInstance.get("/api/members");
       setMembers(response.data.data || []);
     } catch (error) {
       setMembers([]);
     }
-  };
+  },[]);
 
-  const fetchChore = async () => {
+  const fetchChore = useCallback(async () => {
     try {
       const response = await axiosInstance.get(`/api/chore/${id}`);
       const chore = response.data.data.chore;
@@ -42,20 +42,20 @@ const EditChorePage = () => {
     } catch (error) {
       alert(error?.response?.data?.message || "Failed to fetch chore");
     }
-  };
-
-  const fetchPageData = async () => {
-    try {
-      setLoading(true);
-      await Promise.all([fetchMembers(), fetchChore()]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  },[id]);
 
   useEffect(() => {
+    const fetchPageData = async () => {
+      try {
+        setLoading(true);
+        await Promise.all([fetchMembers(), fetchChore()]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchPageData();
-  }, [id, fetchPageData]);
+  }, [fetchMembers, fetchChore]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
