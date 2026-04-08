@@ -68,9 +68,17 @@ jobs:
           touch .env
           echo "${{ secrets.PROD }}" > .env
 
-      - name: Start or Restart PM2 app
+      - name: Delete old PM2 app if exists
         run: |
-          pm2 restart chore-master-backend || pm2 start backend/server.js --name chore-master-backend
+          pm2 delete chore-master-backend || true
+
+      - name: Start or Restart Backend
+        run: |
+          pm2 restart backend || pm2 start backend/server.js --name backend
+
+      - name: Start or Restart Frontend
+        run: |
+          pm2 restart frontend || pm2 start serve --name frontend -- -s frontend/build -l 3000
 
       - name: Save PM2 process list
         run: pm2 save
