@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../axiosConfig";
 import { useAuth } from "../context/AuthContext";
@@ -11,7 +11,7 @@ const ChoreDetails = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const fetchChoreDetails = async () => {
+  const fetchChoreDetails = useCallback( async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(`/api/chore/${id}`);
@@ -22,7 +22,7 @@ const ChoreDetails = () => {
     } finally {
       setLoading(false);
     }
-  };
+  },[id]);
 
   const handleEdit = (chore) => {
     navigate(`/chores/edit/${chore._id}`);
@@ -82,7 +82,7 @@ const ChoreDetails = () => {
 
   useEffect(() => {
     fetchChoreDetails();
-  }, [id, fetchChoreDetails]);
+  }, [fetchChoreDetails]);
 
   if (loading) {
     return <div>Loading chore details...</div>;
