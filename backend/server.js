@@ -2,7 +2,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectDB = require('./config/db');
+const db = require("./config/db")
 const mainRouter = require('./routes/index');
 
 dotenv.config();
@@ -15,13 +15,13 @@ app.use(express.json());
 // api
 app.use('/api', mainRouter);
 
-// Export the app object for testing
-if (require.main === module) {
-    connectDB();
-    // If the file is run directly, start the server
-    const PORT = process.env.PORT || 5001;
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  }
 
+async function start() {
+  await db.connect();                   
+  const PORT = process.env.PORT || 5001;
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  });
+}
 
-module.exports = app
+start();

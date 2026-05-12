@@ -1,17 +1,24 @@
-// config/db.js
-const mongoose = require("mongoose");
 
-// Set strictQuery explicitly to suppress the warning
-//mongoose.set('strictQuery', true);
+const mongoose = require('mongoose');
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);  // Remove deprecated options
-    console.log("MongoDB connected successfully");
-  } catch (error) {
-    console.error("MongoDB connection error:", error.message);
-    process.exit(1);
+class Database {
+  constructor() {
+    if (Database.instance) return Database.instance;
+    this.connected = false;
+    Database.instance = this;
   }
-};
 
-module.exports = connectDB;
+  async connect() {
+    if (this.connected) return;
+    await mongoose.connect(process.env.MONGO_URI);
+    this.connected = true;
+    console.log('Database connected');
+  }
+
+  async disconnect() {
+    await mongoose.disconnect();
+    this.connected = false;
+  }
+}
+
+module.exports = new Database();

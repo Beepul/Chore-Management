@@ -1,31 +1,40 @@
+const BaseController = require(".");
 const MemberModel = require("../models/Member.model");
 const ChoreModel = require("../models/Chore.model");
 
-class ChoreController {
+class ChoreController extends BaseController {
+  constructor(){
+    super(); // required when extending a class
+    // Manually bind every method to this instance
+    this.createChore = this.createChore.bind(this);
+    this.getMainChores = this.getMainChores.bind(this);
+    this.getAllChores = this.getAllChores.bind(this);
+    this.getSingleChore = this.getSingleChore.bind(this);
+    this.deleteChore = this.deleteChore.bind(this);
+    this.updateChore = this.updateChore.bind(this);
+    this.updateChoreStatus = this.updateChoreStatus.bind(this);
+  }
+
+  async getCurrentMembership(userId) {
+    return MemberModel.findOne({ user: userId, status: 'active' });
+  }
+
   async createChore(req, res) {
     try {
       const { title, description, category, dueDate, assignedTo, parentChore } = req.body;
+
       if (!title) {
-        return res.status(400).json({
-          message: "Title is required",
-        });
+        return this.sendError(res, "Title is required", 400)
       }
 
-      const currentMembership = await MemberModel.findOne({
-        user: req.user._id,
-        status: "active",
-      });
+      const currentMembership = await this.getCurrentMembership(req.user._id) 
 
       if (!currentMembership) {
-        return res.status(400).json({
-          message: "You do not belong to any household",
-        });
+        return this.sendError(res, "You do not belong to any household", 400)
       }
 
       if (currentMembership.role !== "admin") {
-        return res.status(403).json({
-          message: "Only admin can create chores",
-        });
+        return this.sendError(res, "Only admin can create chores", 403)
       }
 
       const householdId = currentMembership.household;
@@ -34,28 +43,19 @@ class ChoreController {
         const parent = await ChoreModel.findById(parentChore);
 
         if (!parent) {
-          return res.status(404).json({
-            message: "Parent chore not found",
-          });
+          return this.sendError(res, "Parent chore not found", 404)
         }
 
         if (parent.household.toString() !== householdId.toString()) {
-          return res.status(403).json({
-            message: "Parent chore does not belong to your household",
-          });
+          return this.sendError(res, "Parent chore does not belong to your household", 403)
         }
 
         const isValidAssignment = (assignedTo || []).every((userId) =>
-          parent.assignedTo.some(
-            (parentUserId) => parentUserId.toString() === userId
-          )
+          parent.assignedTo.some((parentUserId) => parentUserId.toString() === userId)
         );
 
         if (!isValidAssignment) {
-          return res.status(400).json({
-            message:
-              "Sub-chore can only be assigned to members already assigned to the parent chore",
-          });
+          return this.sendError(res,"Sub-chore can only be assigned to members already assigned to the parent chore", 400)
         }
       }
 
@@ -70,22 +70,14 @@ class ChoreController {
         createdBy: req.user._id,
       });
 
-      return res.status(201).json({
-        data: chore,
-        message: "Chore created successfully",
-      });
+      return this.sendSuccess(res, chore, "Chore created successfully", 201)
     } catch (error) {
-      return res.status(500).json({
-        message: error.message,
-      });
+      return this.sendError(res, error.message)
     }
   }
   async getMainChores(req, res) {
     try {
-      const currentMembership = await MemberModel.findOne({
-        user: req.user._id,
-        status: "active",
-      });
+      const currentMembership = await this.getCurrentMembership(req.user._id);
 
       if (!currentMembership) {
         return res.status(400).json({

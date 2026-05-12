@@ -1,8 +1,8 @@
 
 const express = require('express');
-const { setupHouseHold } = require('../controllers/householdController');
 const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
+const controller = require("../controllers/householdController")
 
-router.post('/setup', protect, setupHouseHold);
+router.post('/setup', protect, controller.setupHouseHold);
 module.exports = router;

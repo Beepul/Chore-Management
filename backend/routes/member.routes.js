@@ -1,10 +1,10 @@
 
 const express = require('express');
 const { protect } = require('../middleware/authMiddleware');
-const { getMembers, removeMember } = require('../controllers/memberController');
 const router = express.Router();
+const controller = require("../controllers/memberController")
 
-router.get('/', protect, getMembers);
-router.delete('/:memberId', protect, removeMember);
+router.get('/', protect, controller.getMembers);
+router.delete('/:memberId', protect, controller.removeMember);
 
 module.exports = router;
