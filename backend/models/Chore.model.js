@@ -21,12 +21,21 @@ const choreSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    assignedTo: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+    assignedTo: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+      required: true,
+      validate: {
+        validator: function (value) {
+          return Array.isArray(value) && value.length > 0;
+        },
+        message: "At least one user must be assigned to the chore.",
       },
-    ],
+    },
     parentChore: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Chore",
@@ -39,10 +48,12 @@ const choreSchema = new mongoose.Schema(
     },
     dueDate: {
       type: Date,
+      required: true,
     },
     category: {
       type: String,
       trim: true,
+      required: true,
     },
   },
   { timestamps: true }
