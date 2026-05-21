@@ -1,6 +1,7 @@
 const BaseController = require(".");
 const MemberModel = require("../models/Member.model");
 const ChoreModel = require("../models/Chore.model");
+const ChoreFactory = require("../factories/ChoreFactory");
 
 class ChoreController extends BaseController {
   constructor(){
@@ -74,16 +75,17 @@ class ChoreController extends BaseController {
       }
     }
 
-    const chore = await ChoreModel.create({
-      title,
-      description,
-      category,
-      dueDate: dueDate || null,
-      assignedTo: assignedTo || [],
-      parentChore: parentChore || null,
-      household: householdId,
-      createdBy: req.user._id,
-    });
+      const chore = ChoreFactory.createChore(category.toLowerCase(), {
+        title,
+        description,
+        dueDate,
+        assignedTo,
+        parentChore: parentChore || null,
+        household: householdId,
+        createdBy: req.user._id,
+      });
+
+      await chore.save();
 
     return this.sendSuccess(res, chore, "Chore created successfully", 201)
   }

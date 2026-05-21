@@ -55,6 +55,11 @@ const choreSchema = new mongoose.Schema(
       trim: true,
       required: true,
     },
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "medium"
+    }
   },
   { timestamps: true }
 );
