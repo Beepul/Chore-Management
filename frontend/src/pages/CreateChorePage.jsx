@@ -80,6 +80,8 @@ const CreateChorePage = () => {
         parentChore: formData.parentChore || null,
       };
 
+      console.log(payload);
+      
       const response = await axiosInstance.post("/api/chore/create", payload);
 
       alert(response.data.message || "Chore created successfully");
