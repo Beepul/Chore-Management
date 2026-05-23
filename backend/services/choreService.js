@@ -1,34 +1,38 @@
-const choreRepository = require("../repositories/choreRepository");
+// const this.choreRepository = require("../repositories/this.choreRepository");
 
 class ChoreService {
+  constructor(choreRepository) {
+    this.choreRepository = this.choreRepository;
+  }
+
   async getAllChores(userId) {
-    const membership = await choreRepository.findActiveMembership(userId);
+    const membership = await this.choreRepository.findActiveMembership(userId);
 
     if (!membership) {
       throw new Error("You do not belong to any household");
     }
 
-    return await choreRepository.findAllByHousehold(membership.household);
+    return await this.choreRepository.findAllByHousehold(membership.household);
   }
 
   async getMainChores(userId) {
-    const membership = await choreRepository.findActiveMembership(userId);
+    const membership = await this.choreRepository.findActiveMembership(userId);
 
     if (!membership) {
       throw new Error("You do not belong to any household");
     }
 
-    return await choreRepository.findMainChoresByHousehold(membership.household);
+    return await this.choreRepository.findMainChoresByHousehold(membership.household);
   }
 
   async getSingleChore(userId, choreId) {
-    const membership = await choreRepository.findActiveMembership(userId);
+    const membership = await this.choreRepository.findActiveMembership(userId);
 
     if (!membership) {
       throw new Error("You do not belong to any household");
     }
 
-    const chore = await choreRepository.findOneByIdAndHousehold(
+    const chore = await this.choreRepository.findOneByIdAndHousehold(
       choreId,
       membership.household
     );
@@ -37,7 +41,7 @@ class ChoreService {
       throw new Error("Chore not found");
     }
 
-    const subChores = await choreRepository.findSubChores(
+    const subChores = await this.choreRepository.findSubChores(
       chore._id,
       membership.household
     );
@@ -71,7 +75,7 @@ async createChore(userId, data) {
     throw error;
   }
 
-  const membership = await choreRepository.findActiveMembership(userId);
+  const membership = await this.choreRepository.findActiveMembership(userId);
 
   if (!membership) {
     const error = new Error("You do not belong to any household");
@@ -91,7 +95,7 @@ async createChore(userId, data) {
   const householdId = membership.household;
 
   if (parentChore) {
-    const parent = await choreRepository.findById(parentChore);
+    const parent = await this.choreRepository.findById(parentChore);
 
     if (!parent) {
       const error = new Error("Parent chore not found");
@@ -120,7 +124,7 @@ async createChore(userId, data) {
     }
   }
 
-  return await choreRepository.create({
+  return await this.choreRepository.create({
     title,
     description,
     category,
@@ -140,7 +144,7 @@ async updateChore(userId, choreId, data) {
     throw error;
   }
 
-  const membership = await choreRepository.findActiveMembership(userId);
+  const membership = await this.choreRepository.findActiveMembership(userId);
 
   if (!membership) {
     const error = new Error("You do not belong to any household");
@@ -154,7 +158,7 @@ async updateChore(userId, choreId, data) {
     throw error;
   }
 
-  const chore = await choreRepository.findById(choreId);
+  const chore = await this.choreRepository.findById(choreId);
 
   if (!chore) {
     const error = new Error("Chore not found");
@@ -174,10 +178,10 @@ async updateChore(userId, choreId, data) {
   chore.dueDate = data.dueDate || null;
   chore.assignedTo = data.assignedTo || [];
 
-  return await choreRepository.save(chore);
+  return await this.choreRepository.save(chore);
 }
 async deleteChore(userId, choreId) {
-  const membership = await choreRepository.findActiveMembership(userId);
+  const membership = await this.choreRepository.findActiveMembership(userId);
 
   if (!membership) {
     const error = new Error("You do not belong to any household");
@@ -185,7 +189,7 @@ async deleteChore(userId, choreId) {
     throw error;
   }
 
-  const chore = await choreRepository.findById(choreId);
+  const chore = await this.choreRepository.findById(choreId);
 
   if (!chore) {
     const error = new Error("Chore not found");
@@ -199,7 +203,7 @@ async deleteChore(userId, choreId) {
     throw error;
   }
 
-  const childChoreExists = await choreRepository.childChoreExists(choreId);
+  const childChoreExists = await this.choreRepository.childChoreExists(choreId);
 
   if (childChoreExists) {
     const error = new Error(
@@ -209,7 +213,7 @@ async deleteChore(userId, choreId) {
     throw error;
   }
 
-  await choreRepository.deleteById(choreId);
+  await this.choreRepository.deleteById(choreId);
 
   return null;
 }
@@ -222,7 +226,7 @@ async updateChoreStatus(userId, choreId, data) {
     throw error;
   }
 
-  const membership = await choreRepository.findActiveMembership(userId);
+  const membership = await this.choreRepository.findActiveMembership(userId);
 
   if (!membership) {
     const error = new Error("You do not belong to any household");
@@ -230,7 +234,7 @@ async updateChoreStatus(userId, choreId, data) {
     throw error;
   }
 
-  const chore = await choreRepository.findById(choreId);
+  const chore = await this.choreRepository.findById(choreId);
 
   if (!chore) {
     const error = new Error("Chore not found");
@@ -256,7 +260,7 @@ async updateChoreStatus(userId, choreId, data) {
 
   if (data.status === "completed") {
     const incompleteChildChore =
-      await choreRepository.findIncompleteChildChore(chore._id);
+      await this.choreRepository.findIncompleteChildChore(chore._id);
 
     if (incompleteChildChore) {
       const error = new Error(
@@ -269,8 +273,8 @@ async updateChoreStatus(userId, choreId, data) {
 
   chore.status = data.status;
 
-  return await choreRepository.save(chore);
+  return await this.choreRepository.save(chore);
 }
 }
 
-module.exports = new ChoreService();
+module.exports = ChoreService;

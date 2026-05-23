@@ -73,4 +73,4 @@ class ChoreRepository {
   }
 }
 
-module.exports = new ChoreRepository();
+module.exports = ChoreRepository;
