@@ -2,7 +2,7 @@
 
 class ChoreService {
   constructor(choreRepository) {
-    this.choreRepository = this.choreRepository;
+    this.choreRepository = choreRepository;
   }
 
   async getAllChores(userId) {
