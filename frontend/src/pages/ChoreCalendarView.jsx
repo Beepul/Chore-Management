@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axiosInstance from "../axiosConfig";
 
 const ChoreCalendarView = () => {
@@ -68,7 +68,7 @@ const ChoreCalendarView = () => {
         chores.forEach(chore =>  {
            
         })
-    }, [members]);
+    }, [members, chores]);
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
@@ -298,7 +298,7 @@ const ChoreCalendarView = () => {
 
                                     Assigned To: {
                                         chore.assignedTo.length > 0
-                                            ?  chore.assignedTo.map(otherId => members.filter((member) => member.user?._id == otherId).at(0).user?.fullname).join(", ")
+                                            ?  chore.assignedTo.map(otherId => members.filter((member) => member.user?._id === otherId).at(0).user?.fullname).join(", ")
                                             : "Unassigned"
 
                                         
