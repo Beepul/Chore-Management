@@ -2,10 +2,13 @@ import React, { useState } from 'react'
 import axiosInstance from '../axiosConfig';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, redirect } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const HouseholdSetup = () => {
     const [formData, setFormData] = useState({ name: '', description: '' });
-    const {user, authLoading} = useAuth()
+    const {user, authLoading, loadUser } = useAuth()
+
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -14,10 +17,11 @@ const HouseholdSetup = () => {
                 throw new Error("Please fill out all the fields")
             }
             await axiosInstance.post('/api/household/setup', formData);
+            await loadUser()
             alert('Household setup successful.');
-            redirect('/dashboard')
+            navigate('/dashboard')
         } catch (error) {
-            alert("Failed to create household")
+            alert(error.response?.data?.message || error.message || "Failed to create household");
         }
     }
 
