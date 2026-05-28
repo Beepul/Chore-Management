@@ -1,14 +1,12 @@
-class BaseController{
+class BaseController {
 
     handleAsync(fn) {
         return (req, res, next) => {
-            Promise.resolve(fn(req, res, next)).catch((error) => {
-                return this.sendError(res, error.message);
-            });
+            return Promise.resolve(fn(req, res, next)).catch(next);
         };
     }
 
-    sendSuccess(res, data, message= "", statusCode = 200) {
+    sendSuccess(res, data, message = "", statusCode = 200) {
         return res.status(statusCode).json({
             success: true,
             data,

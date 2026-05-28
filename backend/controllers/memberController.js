@@ -15,7 +15,7 @@ class MemberCtrl extends BaseController{
     });
 
     if (!currentMembership) {
-      this.sendError(res, "You do not belong to any household", 400)
+      return this.sendError(res, "You do not belong to any household", 400)
     }
 
     const members = await MemberModel.find({
