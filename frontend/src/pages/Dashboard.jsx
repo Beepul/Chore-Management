@@ -21,8 +21,6 @@ const Dashboard = () => {
                             ? <AdminDashboardView />
                             : <MemberDashboardView />
                         }
-
-                        {/* 日曆 */}
                         <ChoreCalendarView />
                     </>
                 )

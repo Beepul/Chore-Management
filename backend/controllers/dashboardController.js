@@ -1,6 +1,7 @@
 const BaseController = require(".");
 const ChoreModel = require("../models/Chore.model");
 const MemberModel = require("../models/Member.model");
+const InvitationModel = require("../models/Invitation.model");
 
 class DashboardCtrl extends BaseController{
   constructor(){
@@ -57,6 +58,10 @@ class DashboardCtrl extends BaseController{
       .sort({ joinedAt: -1 })
       .limit(5);
 
+    const invitations = await InvitationModel.find({
+      household: householdId,
+    }).sort({ createdAt: -1 });
+
     return this.sendSuccess(res,
       {
         totalMembers,
@@ -65,6 +70,7 @@ class DashboardCtrl extends BaseController{
         completedChores,
         recentChores,
         recentMembers,
+        invitations,
       },
       "Admin dashboard fetched successfully"
     )
