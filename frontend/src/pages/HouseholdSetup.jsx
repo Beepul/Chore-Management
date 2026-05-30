@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axiosInstance from '../axiosConfig';
 import { useAuth } from '../context/AuthContext';
-import { Navigate, redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
 const HouseholdSetup = () => {
